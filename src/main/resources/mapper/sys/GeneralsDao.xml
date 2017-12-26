@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vigekoo.modules.sys.dao.GeneralsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.vigekoo.modules.sys.entity.Generals" id="generalsMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="image" column="image"/>
+        <result property="pcImage" column="pc_image"/>
+        <result property="video" column="video"/>
+        <result property="previewImage" column="preview_image"/>
+        <result property="previewVideo" column="preview_video"/>
+        <result property="intro" column="intro"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.vigekoo.modules.sys.entity.Generals">
+		select * from generals where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.vigekoo.modules.sys.entity.Generals">
+		select * from generals
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from generals 
+	</select>
+	 
+	<insert id="save" parameterType="com.vigekoo.modules.sys.entity.Generals" useGeneratedKeys="true" keyProperty="id">
+		insert into generals
+		(
+			`name`, 
+			`image`, 
+			`pc_image`, 
+			`video`, 
+			`preview_image`, 
+			`preview_video`, 
+			`intro`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{name}, 
+			#{image}, 
+			#{pcImage}, 
+			#{video}, 
+			#{previewImage}, 
+			#{previewVideo}, 
+			#{intro}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.vigekoo.modules.sys.entity.Generals">
+		update generals 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="image != null">`image` = #{image}, </if>
+			<if test="pcImage != null">`pc_image` = #{pcImage}, </if>
+			<if test="video != null">`video` = #{video}, </if>
+			<if test="previewImage != null">`preview_image` = #{previewImage}, </if>
+			<if test="previewVideo != null">`preview_video` = #{previewVideo}, </if>
+			<if test="intro != null">`intro` = #{intro}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from generals where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from generals where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

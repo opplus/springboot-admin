@@ -1,0 +1,8 @@
+version: '1'
+services:
+  renren-fast:
+    image: sbed/image
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.profiles.active=dev

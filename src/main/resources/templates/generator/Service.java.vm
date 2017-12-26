@@ -1,0 +1,28 @@
+package ${package}.service;
+
+import ${package}.entity.${className};
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author ${author}
+ * @Description: TODO(${comments})
+ * @date ${datetime}
+ */
+public interface ${className}Service {
+	
+	${className} queryObject(${pk.attrType} ${pk.attrname});
+	
+	List<${className}> queryList(Map<String, Object> map);
+	
+	int queryTotal(Map<String, Object> map);
+	
+	void save(${className} ${classname});
+	
+	void update(${className} ${classname});
+	
+	void delete(${pk.attrType} ${pk.attrname});
+	
+	void deleteBatch(${pk.attrType}[] ${pk.attrname}s);
+
+}

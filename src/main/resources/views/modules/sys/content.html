@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>内容管理</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<link rel="stylesheet" href="../../plugins/tag/jquery.tag-editor.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../plugins/tinymce/tinymce.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../plugins/tag/jquery.caret.min.js"></script>
+<script src="../../plugins/tag/jquery.tag-editor.min.js"></script>
+</head>
+<body>
+<div id="rapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.keyword" @keyup.enter="query" placeholder="输入标题，别名进行搜索">
+			</div>
+			<a class="btn btn-default" @click="query"><i class="fa fa-search">&nbsp;查询</i></a>
+
+			<a v-if="hasPermission('sys:content:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('sys:content:update')" class="btn btn-info" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('sys:content:delete')" class="btn btn-danger" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form>
+			<div class="panel-body">
+				<div class="col-md-7">
+					<div class="form-group">
+						<label class="input-title">标题</label>
+						<input type="text" class="form-control" v-model="content.title" placeholder="标题"/>
+					</div>
+					<div class="form-group">
+						<label class="input-title">别名</label>
+						<input type="text" class="form-control" v-model="content.slug" placeholder="别名"/>
+					</div>
+					<div class="form-group">
+						<label class="input-title">内容</label>
+						<input type="hidden" class="form-control" v-model="content.text" placeholder="内容"/>
+						<textarea id="textarea"></textarea>
+					</div>
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#tab_1" data-toggle="tab">属性设置</a></li>
+						<li><a href="#tab_seo" data-toggle="tab">SEO</a></li>
+						<li><a href="#tab_remark" data-toggle="tab">备注</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade in active" id="tab_1">
+							<div class="form-group">
+								<label class="input-title">价格</label>
+								<input type="text" class="form-control" v-model="content.amount" placeholder="价格"/>
+							</div>
+							<div class="form-group">
+								<label class="input-title">排序号</label>
+								<input type="number" class="form-control" v-model="content.orderNum" placeholder="排序号"/>
+							</div>
+							<div class="form-group">
+								<label class="input-title">标识</label>
+								<input type="text" class="form-control" v-model="content.flag" placeholder="标识"/>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="tab_seo">
+							<div class="form-group">
+								<label class="input-title">SEO关键字</label>
+								<textarea class="form-control" v-model="content.metaKeywords" placeholder="SEO关键字"></textarea>
+							</div>
+							<div class="form-group">
+								<label class="input-title">SEO描述内容</label>
+								<textarea class="form-control" v-model="content.metaDescription" placeholder="SEO描述内容"></textarea>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="tab_remark">
+							<div class="form-group">
+								<label class="input-title">备注</label>
+								<textarea class="form-control" v-model="content.remark" placeholder="备注"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div id="categoryAccordion" class="panel-group">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#categoryAccordion" href="#collapseOne">分类</a>
+								</h4>
+							</div>
+							<div id="collapseOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<ul id="categoryTree" class="ztree"></ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div id="featureAccordion" class="panel-group">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#featureAccordion" href="#collapseTwo">专题</a>
+								</h4>
+							</div>
+							<div id="collapseTwo" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<ul id="featureTree" class="ztree"></ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div id="tagAccordion" class="panel-group">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#featureAccordion" href="#collapseThree">标签</a>
+								</h4>
+							</div>
+							<div id="collapseThree" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<textarea id="contentTags" class="form-control"></textarea>
+									<span>多个标签请用 “回车键” 或英文逗号 “,” 隔开。</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label class="input-title">缩略图</label>
+						<input type="hidden" class="form-control" v-model="content.thumbnail" placeholder="缩略图"/>
+						<div class="thumbnail" style="text-align: center;">
+							<img class="img-thumbnail" style="width: 55%;height: 55%;" :src="content.thumbnail">
+							<div class="caption">
+								<a class="btn btn-link" @click="openAttachmentLayer">选择缩略图</a>
+								<a class="btn btn-link" @click="removeAttachment">移除缩略图</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group" style="text-align: center;">
+						<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+						&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<attachment-layer></attachment-layer>
+</div>
+
+<script src="../../js/modules/sys/content.js"></script>
+</body>
+</html>

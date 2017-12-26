@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vigekoo.modules.sys.dao.SysAttachmentDao">
+
+    <select id="queryObject" resultType="com.vigekoo.modules.sys.entity.SysAttachment">
+        select * from sys_attachment where id = #{id}
+    </select>
+
+    <select id="queryList" parameterType="map" resultType="com.vigekoo.modules.sys.entity.SysAttachment">
+        select * from sys_attachment
+        <where>
+            <if test="title != null and title != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+            <if test="mime_type != null and mime_type != ''">
+                and `mime_type` like concat('%',#{mime_type},'%')
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" parameterType="map" resultType="int">
+        select count(*) from sys_attachment
+        <where>
+            <if test="title != null and title != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteBatch">
+        delete from sys_attachment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="save" parameterType="com.vigekoo.modules.sys.entity.SysAttachment" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_attachment
+        (
+            `id`,
+            `title`,
+            `user_id`,
+            `path`,
+            `mime_type`,
+            `suffix`,
+            `create_time`
+        )
+        values
+        (
+            #{id},
+            #{title},
+            #{userId},
+            #{path},
+            #{mimeType},
+            #{suffix},
+            #{createTime}
+        )
+    </insert>
+
+</mapper>

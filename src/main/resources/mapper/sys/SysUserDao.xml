@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vigekoo.modules.sys.dao.SysUserDao">
+	<select id="queryObject" resultType="com.vigekoo.modules.sys.entity.SysUser">
+		select * from sys_user where id = #{value}
+	</select>
+	
+	<select id="queryList" resultType="com.vigekoo.modules.sys.entity.SysUser">
+		select * from sys_user
+		<where>
+			<if test="keyword != null and keyword != ''">
+				and (
+					`username` like concat('%',#{keyword},'%')
+					or `email` = #{keyword}
+					or `mobile` = #{keyword}
+				)
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from sys_user
+		<where>
+			<if test="username != null and username != ''">
+				and `username` like concat('%',#{username},'%') 
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询用户的所有权限 -->
+	<select id="queryAllPerms" resultType="string">
+		select m.perms from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+			LEFT JOIN sys_menu m on rm.menu_id = m.id
+		where ur.user_id = #{userId}
+	</select>
+	
+	<!-- 查询用户的所有菜单ID --> 
+	<select id="queryAllMenuId" resultType="long">
+		select distinct rm.menu_id from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+		where ur.user_id = #{userId}
+	</select>
+	
+	<select id="queryByUserName" resultType="com.vigekoo.modules.sys.entity.SysUser">
+		select * from sys_user where username = #{username}
+	</select>
+	
+	<insert id="save" parameterType="com.vigekoo.modules.sys.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_user
+		(
+			`id`,
+			`username`,
+			`nickname`,
+			`password`,
+			`salt`,
+			`email`, 
+			`mobile`, 
+			`status`,
+			`create_time`
+		)
+		values
+		(
+			#{id},
+			#{username},
+			#{nickname},
+			#{password},
+			#{salt},
+			#{email}, 
+			#{mobile}, 
+			#{status},
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.vigekoo.modules.sys.entity.SysUser">
+		update sys_user 
+		<set> 
+			<if test="username != null and username != ''">`username` = #{username}, </if>
+			<if test="nickname != null and nickname != ''">`nickname` = #{nickname}, </if>
+			<if test="password != null and password != ''">`password` = #{password}, </if>
+			<if test="email != null and email != ''">`email` = #{email}, </if>
+			<if test="mobile != null and mobile != ''">`mobile` = #{mobile}, </if>
+			<if test="status != null and status != ''">`status` = #{status}, </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updatePassword" parameterType="map">
+		update sys_user set `password` = #{newPassword} 
+			where id = #{id} and password = #{password}
+	</update>
+	
+	<delete id="deleteBatch">
+		delete from sys_user where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		;
+		delete from sys_user_role where user_id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

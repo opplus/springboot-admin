@@ -1,0 +1,10 @@
+package ${package}.dao;
+
+import ${package}.entity.${className};
+import com.vigekoo.modules.sys.dao.BaseDao;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface ${className}Dao extends BaseDao<${className}> {
+	
+}
