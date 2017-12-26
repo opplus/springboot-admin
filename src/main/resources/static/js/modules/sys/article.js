@@ -60,7 +60,7 @@ var vm = new Vue({
             vm.showList = false;
             vm.title = "新增";
             vm.article = {};
-            setTinymceContent("123123");
+            setTinymceContent("");
         },
         update: function (event) {
             var id = getSelectedRow();

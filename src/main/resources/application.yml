@@ -17,7 +17,7 @@ server:
         max-application-dev.ymlthreads: 1000
         min-spare-threads: 30
     port: 8888
-    #打开注释，则通过【http://localhost:8080/vgk/admin】访问
+    #打开注释，则通过【http://localhost:8888/vgk/admin】访问
     context-path: /vgk/admin
 
 # mysql

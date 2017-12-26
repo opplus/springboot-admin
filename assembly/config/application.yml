@@ -17,8 +17,8 @@ server:
         max-application-dev.ymlthreads: 1000
         min-spare-threads: 30
     port: 8894
-    #打开注释，则通过【http://localhost:8080/vgk/admin】访问
-    context-path: /vgk/admin
+    #打开注释，则通过【http://localhost:8894/vgk/admin】访问
+    context-path: /sbed/admin
 
 # mysql
 spring:
@@ -30,7 +30,7 @@ spring:
         driverClassName: com.mysql.jdbc.Driver
         druid:
             first:  #数据源1
-                url: jdbc:mysql://localhost:3306/sbed?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                url: jdbc:mysql://localhost:3306/VGK?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
                 username: root
                 password: aa111111
             initial-size: 10

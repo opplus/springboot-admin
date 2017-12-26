@@ -20,6 +20,7 @@ T.p = url;
 
 //请求前缀
 var baseURL = getRootPath();
+// var baseURL = "http://192.168.162.1:8889/vgk/dev/admin";
 
 function getRootPath() {
     var pathName = parent.location.pathname;
@@ -139,7 +140,6 @@ function openLayer(width, height, title, div) {
 }
 
 
-
 //选择附件layer
 function openAttachmentLayer(callback, mime_type) {
     var attachment_jqGrid = $("#attachment_jqGrid");
@@ -176,26 +176,26 @@ function openAttachmentLayer(callback, mime_type) {
             {label: '标题', name: 'title', width: 100},
             {label: '地址', name: 'path', width: 100, hidden: true},
             {
-                label: '缩略图', name: 'img', width: 100, formatter: function (value, options, row) {
+                label: '缩略图', name: 'img', index: 'path', width: 100, formatter: function (value, options, row) {
                 var mime = row.mimeType;
                 var path = row.path;
                 if (mime.indexOf('image') >= 0) {
-                    return '<img style="width: 200px;height: 200px;" src="' + uploadFileResource + path + '" >';
+                    return '<img style="width: 100px;height: 100px;" src="' + uploadFileResource + path + '" >';
                 } else if (mime.indexOf('audio') >= 0) {
-                    return '<img style="width: 200px;height: 200px;" src="' + baseURL + '/image/audio.jpg" >';
+                    return '<img style="width: 100px;height: 100px;" src="' + baseURL + '/image/audio.jpg" >';
                 } else if (mime.indexOf('video') >= 0) {
-                    return '<img style="width: 200px;height: 200px;" src="' + baseURL + '/image/video.jpg" >';
+                    return '<img style="width: 100px;height: 100px;" src="' + baseURL + '/image/video.jpg" >';
                 } else if (mime.indexOf('application') >= 0) {
-                    return '<img style="width: 200px;height: 200px;" src="' + baseURL + '/image/file.jpg" >';
+                    return '<img style="width: 100px;height: 100px;" src="' + baseURL + '/image/file.jpg" >';
                 }
             }
             },
-            {label: '创建时间', name: 'createTime', width: 90}
+            {label: '创建时间', name: 'createTime', index: 'create_time', width: 90}
         ],
         viewrecords: true,
         height: 450,
-        rowNum: 20,
-        rowList: [20, 40, 60],
+        rowNum: 10,
+        rowList: [10, 30, 50],
         rownumbers: true,
         rownumWidth: 25,
         autowidth: true,
@@ -223,11 +223,31 @@ function openAttachmentLayer(callback, mime_type) {
 var attachmentLayerTemplate = Vue.extend({
     template: [
         '<div id="attachmentLayer" style="display: none;">',
+        '<div class="grid-btn" style="margin-top: 12px;">\n' +
+        '    <div class="form-group col-sm-2">\n' +
+        '    <input type="text" class="form-control" v-model="title" @keyup.enter="searchAttachment" placeholder="标题">\n' +
+        '    </div>\n' +
+        '    <a class="btn btn-default" @click="searchAttachment"><i class="fa fa-search">&nbsp;查询</i></a>\n' +
+        '</div>',
         '<table id="attachment_jqGrid"></table>',
         '<div id="attachment_jqGridPager"></div>',
         '</div>'
-    ].join('')
+    ].join(''),
+    data() {
+        return {
+            title: ''
+        }
+    },
+    methods: {
+        searchAttachment: function () {
+            $("#attachment_jqGrid").jqGrid('setGridParam', {
+                postData: {'title': this.title},
+                page: 1
+            }).trigger("reloadGrid");
+        }
+    }
 });
+
 Vue.component('attachment-layer', attachmentLayerTemplate);
 
 //文本编辑器

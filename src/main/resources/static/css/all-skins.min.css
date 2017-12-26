@@ -80,7 +80,7 @@
     border-left: 3px solid transparent
 }
 
-.skin-blue .sidebar-menu > li:hover > a, .skin-blue .sidebar-menu > li > ul > li:hover > a {
+.skin-blue .sidebar-menu > li> a:hover , .skin-blue .sidebar-menu > li > ul > li > a:hover {
     background-color: #825c8187
 }
 
@@ -101,7 +101,7 @@
     color: #bfcbd9
 }
 
-.skin-blue .treeview-menu > li.active > a, .skin-blue .treeview-menu > li > a:hover {
+.skin-blue .treeview-menu > li.active > a {
     color: #20a0ff
 }
 

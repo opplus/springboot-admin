@@ -35,6 +35,9 @@
             <if test="title != null and title != ''">
                 and `title` like concat('%',#{title},'%')
             </if>
+            <if test="mime_type != null and mime_type != ''">
+                and `mime_type` like concat('%',#{mime_type},'%')
+            </if>
         </where>
     </select>
 
